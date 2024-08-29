@@ -4,15 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autoplay Fullscreen YouTube Video</title>
+    <style>
+        /* Make sure the iframe takes up the full screen */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
 </head>
 <body>
-    <iframe id="video" src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&autoplay=1&mute=1" frameborder="0" allowfullscreen></iframe>
+    <iframe id="video" src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&autoplay=1" frameborder="0" allow="autoplay; fullscreen"></iframe>
 
     <script>
-        // Automatically request fullscreen
         document.addEventListener('DOMContentLoaded', function() {
             var iframe = document.getElementById('video');
-            iframe.requestFullscreen();
+            var requestFullScreen = iframe.requestFullscreen || iframe.mozRequestFullScreen || iframe.webkitRequestFullscreen || iframe.msRequestFullscreen;
+            if (requestFullScreen) {
+                requestFullScreen.call(iframe);
+            }
+
+            // Set up a small delay to ensure fullscreen works in some browsers
+            setTimeout(function() {
+                var videoWindow = iframe.contentWindow;
+                videoWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            }, 500);
         });
     </script>
 </body>
